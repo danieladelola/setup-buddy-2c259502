@@ -1,5 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Contestants, Personalities, Footer } from "@/components/site";
 
 
@@ -18,7 +17,7 @@ export const Route = createFileRoute("/contestant")({
 function ContestantPage() {
   return (
     <main className="bg-background text-foreground">
-      <PageHero kicker="Contestant" title="Meet the women" italic="shaping tomorrow." sub="Browse contestant profiles and apply to join the Miss Agriculture Zambia 2027 stage." />
+      <PageHero kicker="Contestant" title="Meet the women" italic="shaping tomorrow." sub="Browse contestant profiles for the Miss Agriculture Zambia 2027 stage." />
 
 
       <Contestants
@@ -28,17 +27,8 @@ function ContestantPage() {
         sub="The official Miss Agriculture Zambia 2027 contestants — open for voting below."
         emptyMessage={
           <>
-            The 2027 contestant roster is being finalised. Applications are still open — secure your place on the official lineup.
+            The 2027 contestant roster is being finalised. Check back soon.
           </>
-        }
-        emptyCta={
-          <Link
-            to="/contestant-apply"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green-deep text-ivory text-sm font-semibold tracking-wide hover:-translate-y-0.5 transition-all"
-          >
-            <Sparkles className="h-4 w-4" />
-            Apply to be a Contestant
-          </Link>
         }
       />
       

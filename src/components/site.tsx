@@ -147,9 +147,6 @@ export function Header({ transparentOnTop = false }: { transparentOnTop?: boolea
           </nav>
 
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <Link to="/contestant-apply" preload="intent" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-gold-soft via-gold to-gold-deep text-green-deep text-[13px] font-semibold tracking-wide shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--gold)_55%,transparent)] hover:-translate-y-0.5 transition-all">
-              Become a Contestant <ArrowRight className="w-4 h-4" />
-            </Link>
             <button
               onClick={() => setOpen(true)}
               className={`lg:hidden p-2 rounded-full ${scrolled ? "text-foreground hover:bg-foreground/5" : "text-white hover:bg-white/10"}`}
@@ -199,9 +196,6 @@ export function Header({ transparentOnTop = false }: { transparentOnTop?: boolea
                   </Link>
                 </motion.div>
               ))}
-              <Link to="/contestant-apply" onClick={() => setOpen(false)} className="mt-8 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-gradient-to-r from-gold-soft via-gold to-gold-deep text-green-deep font-semibold">
-                Become a Contestant <ArrowRight className="w-4 h-4" />
-              </Link>
               <div className="mt-8 text-xs text-ivory/60 leading-relaxed">
                 Empowering Women • Advancing Agriculture • Celebrating Zambia
               </div>
@@ -366,9 +360,6 @@ export function AboutTeaser() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link to="/about" preload="intent" className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-green-deep text-ivory text-sm font-semibold tracking-wide hover:bg-green-forest transition-all">
                 Learn About Us <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link to="/contestant" preload="intent" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-green-deep/25 text-green-deep text-sm font-medium hover:bg-green-deep/5 transition-all">
-                Become a Contestant
               </Link>
             </div>
           </Reveal>
@@ -1152,6 +1143,13 @@ function formatEventTime(iso: string | null): string {
   return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 }
 
+const EVENT_FALLBACK_IMAGES = [g1, g2, g3, g4, g5, g6];
+const EVENT_FALLBACK_DESC: Record<string, string> = {
+  audition: "Open auditions where aspiring contestants present themselves, their agricultural vision and their talent before the judging panel.",
+  gala: "An elegant evening of fashion, culture and celebration honouring Zambian agriculture and the women leading it.",
+  finale: "The grand finale — the crowning night of Miss Agriculture Zambia, with performances, awards and the new queen announced.",
+  summit: "A gathering of farmers, youth, partners and policymakers sharing innovation and opportunities across Zambian agriculture.",
+};
 const EVENT_TYPE_LABEL: Record<string, string> = {
   audition: "Auditions",
   workshop: "Workshop",
@@ -1204,6 +1202,16 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
                   {/* Left accent bar */}
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold to-gold-deep opacity-80" />
 
+                  {/* Event image */}
+                  <div className="relative md:w-56 md:shrink-0 aspect-[16/9] md:aspect-auto overflow-hidden bg-muted">
+                    <img
+                      src={e.banner_url || EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length]}
+                      alt={e.title}
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+
                   {/* Date column */}
                   <div className="relative flex md:flex-col items-center md:items-start gap-4 md:gap-1 px-6 py-5 md:py-7 md:w-36 md:shrink-0 border-b md:border-b-0 md:border-r border-border/60 bg-muted/30">
                     <div className="flex flex-col items-center md:items-start">
@@ -1226,6 +1234,9 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
                       <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground font-medium">{EVENT_TYPE_LABEL[e.type] ?? e.type}</span>
                     </div>
                     <h3 className="font-display text-xl md:text-2xl text-foreground leading-tight">{e.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {e.description?.trim() || EVENT_FALLBACK_DESC[e.type] || "Join Miss Agriculture Zambia for this official event celebrating women, agriculture and Zambian culture. Reserve your ticket to secure your place."}
+                    </p>
                     {e.location && (
                       <div className="mt-2 flex flex-col gap-1">
                         {e.location.split(" | ").map((loc, idx) => (
@@ -1593,6 +1604,12 @@ export function Footer() {
           <h4 className="font-display text-base text-ivory mb-4">Explore</h4>
           <ul className="space-y-2 text-sm">
             {NAV.map((n) => <li key={n.to}><Link to={n.to} className="hover:text-gold transition-colors">{n.label}</Link></li>)}
+          </ul>
+          <h4 className="font-display text-base text-ivory mt-6 mb-4">Policies</h4>
+          <ul className="space-y-2 text-sm">
+            <li><Link to="/refund-policy" className="hover:text-gold transition-colors">Refund Policy</Link></li>
+            <li><Link to="/cancellation-policy" className="hover:text-gold transition-colors">Cancellation Policy</Link></li>
+            <li><Link to="/shipping-policy" className="hover:text-gold transition-colors">Shipping & Delivery Policy</Link></li>
           </ul>
         </div>
 
