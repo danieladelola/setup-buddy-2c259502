@@ -9,64 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as CancellationPolicyRouteImport } from './routes/cancellation-policy'
-import { Route as ContestantRouteImport } from './routes/contestant'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
-import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as SponsorsRouteImport } from './routes/sponsors'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as ContestantRouteImport } from './routes/contestant'
+import { Route as CancellationPolicyRouteImport } from './routes/cancellation-policy'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
-import { Route as AdminApplicationsIndexRouteImport } from './routes/admin/applications.index'
-import { Route as AdminContestantsIndexRouteImport } from './routes/admin/contestants.index'
-import { Route as AdminContestantsIdRouteImport } from './routes/admin/contestants.$id'
-import { Route as AdminContestantsNewRouteImport } from './routes/admin/contestants.new'
-import { Route as AdminEventsIndexRouteImport } from './routes/admin/events.index'
-import { Route as AdminEventsRegistrationsRouteImport } from './routes/admin/events.registrations'
-import { Route as AdminMediaIndexRouteImport } from './routes/admin/media.index'
-import { Route as AdminSponsorsIndexRouteImport } from './routes/admin/sponsors.index'
 import { Route as AdminVotingIndexRouteImport } from './routes/admin/voting.index'
-import { Route as ApiAdminGeneratePortraitRouteImport } from './routes/api/admin/generate-portrait'
-import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
-import { Route as ApiFilesIdRouteImport } from './routes/api/files.$id'
+import { Route as AdminSponsorsIndexRouteImport } from './routes/admin/sponsors.index'
+import { Route as AdminMediaIndexRouteImport } from './routes/admin/media.index'
+import { Route as AdminEventsIndexRouteImport } from './routes/admin/events.index'
+import { Route as AdminContestantsIndexRouteImport } from './routes/admin/contestants.index'
+import { Route as AdminApplicationsIndexRouteImport } from './routes/admin/applications.index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
+import { Route as ApiFilesIdRouteImport } from './routes/api/files.$id'
+import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
+import { Route as ApiAdminGeneratePortraitRouteImport } from './routes/api/admin/generate-portrait'
+import { Route as AdminEventsRegistrationsRouteImport } from './routes/admin/events.registrations'
+import { Route as AdminContestantsNewRouteImport } from './routes/admin/contestants.new'
+import { Route as AdminContestantsIdRouteImport } from './routes/admin/contestants.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
-  id: '/cancellation-policy',
-  path: '/cancellation-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContestantRoute = ContestantRouteImport.update({
-  id: '/contestant',
-  path: '/contestant',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RefundPolicyRoute = RefundPolicyRouteImport.update({
-  id: '/refund-policy',
-  path: '/refund-policy',
+const SponsorsRoute = SponsorsRouteImport.update({
+  id: '/sponsors',
+  path: '/sponsors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
@@ -74,9 +44,39 @@ const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
   path: '/shipping-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SponsorsRoute = SponsorsRouteImport.update({
-  id: '/sponsors',
-  path: '/sponsors',
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContestantRoute = ContestantRouteImport.update({
+  id: '/contestant',
+  path: '/contestant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
+  id: '/cancellation-policy',
+  path: '/cancellation-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -89,40 +89,9 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
-  id: '/admin/applications/',
-  path: '/admin/applications/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminContestantsIndexRoute = AdminContestantsIndexRouteImport.update({
-  id: '/admin/contestants/',
-  path: '/admin/contestants/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminContestantsIdRoute = AdminContestantsIdRouteImport.update({
-  id: '/admin/contestants/$id',
-  path: '/admin/contestants/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminContestantsNewRoute = AdminContestantsNewRouteImport.update({
-  id: '/admin/contestants/new',
-  path: '/admin/contestants/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminEventsIndexRoute = AdminEventsIndexRouteImport.update({
-  id: '/admin/events/',
-  path: '/admin/events/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminEventsRegistrationsRoute =
-  AdminEventsRegistrationsRouteImport.update({
-    id: '/admin/events/registrations',
-    path: '/admin/events/registrations',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AdminMediaIndexRoute = AdminMediaIndexRouteImport.update({
-  id: '/admin/media/',
-  path: '/admin/media/',
+const AdminVotingIndexRoute = AdminVotingIndexRouteImport.update({
+  id: '/admin/voting/',
+  path: '/admin/voting/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSponsorsIndexRoute = AdminSponsorsIndexRouteImport.update({
@@ -130,9 +99,39 @@ const AdminSponsorsIndexRoute = AdminSponsorsIndexRouteImport.update({
   path: '/admin/sponsors/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminVotingIndexRoute = AdminVotingIndexRouteImport.update({
-  id: '/admin/voting/',
-  path: '/admin/voting/',
+const AdminMediaIndexRoute = AdminMediaIndexRouteImport.update({
+  id: '/admin/media/',
+  path: '/admin/media/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEventsIndexRoute = AdminEventsIndexRouteImport.update({
+  id: '/admin/events/',
+  path: '/admin/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContestantsIndexRoute = AdminContestantsIndexRouteImport.update({
+  id: '/admin/contestants/',
+  path: '/admin/contestants/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
+  id: '/admin/applications/',
+  path: '/admin/applications/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
+  id: '/api/public/upload',
+  path: '/api/public/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
+  id: '/api/files/$id',
+  path: '/api/files/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminUploadRoute = ApiAdminUploadRouteImport.update({
+  id: '/api/admin/upload',
+  path: '/api/admin/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminGeneratePortraitRoute =
@@ -141,19 +140,20 @@ const ApiAdminGeneratePortraitRoute =
     path: '/api/admin/generate-portrait',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiAdminUploadRoute = ApiAdminUploadRouteImport.update({
-  id: '/api/admin/upload',
-  path: '/api/admin/upload',
+const AdminEventsRegistrationsRoute =
+  AdminEventsRegistrationsRouteImport.update({
+    id: '/admin/events/registrations',
+    path: '/admin/events/registrations',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminContestantsNewRoute = AdminContestantsNewRouteImport.update({
+  id: '/admin/contestants/new',
+  path: '/admin/contestants/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
-  id: '/api/files/$id',
-  path: '/api/files/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
-  id: '/api/public/upload',
-  path: '/api/public/upload',
+const AdminContestantsIdRoute = AdminContestantsIdRouteImport.update({
+  id: '/admin/contestants/$id',
+  path: '/admin/contestants/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -346,53 +346,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-policy': {
-      id: '/cancellation-policy'
-      path: '/cancellation-policy'
-      fullPath: '/cancellation-policy'
-      preLoaderRoute: typeof CancellationPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contestant': {
-      id: '/contestant'
-      path: '/contestant'
-      fullPath: '/contestant'
-      preLoaderRoute: typeof ContestantRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/refund-policy': {
-      id: '/refund-policy'
-      path: '/refund-policy'
-      fullPath: '/refund-policy'
-      preLoaderRoute: typeof RefundPolicyRouteImport
+    '/sponsors': {
+      id: '/sponsors'
+      path: '/sponsors'
+      fullPath: '/sponsors'
+      preLoaderRoute: typeof SponsorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shipping-policy': {
@@ -402,11 +360,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShippingPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sponsors': {
-      id: '/sponsors'
-      path: '/sponsors'
-      fullPath: '/sponsors'
-      preLoaderRoute: typeof SponsorsRouteImport
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contestant': {
+      id: '/contestant'
+      path: '/contestant'
+      fullPath: '/contestant'
+      preLoaderRoute: typeof ContestantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cancellation-policy': {
+      id: '/cancellation-policy'
+      path: '/cancellation-policy'
+      fullPath: '/cancellation-policy'
+      preLoaderRoute: typeof CancellationPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -423,53 +423,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/applications/': {
-      id: '/admin/applications/'
-      path: '/admin/applications'
-      fullPath: '/admin/applications/'
-      preLoaderRoute: typeof AdminApplicationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/contestants/': {
-      id: '/admin/contestants/'
-      path: '/admin/contestants'
-      fullPath: '/admin/contestants/'
-      preLoaderRoute: typeof AdminContestantsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/contestants/$id': {
-      id: '/admin/contestants/$id'
-      path: '/admin/contestants/$id'
-      fullPath: '/admin/contestants/$id'
-      preLoaderRoute: typeof AdminContestantsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/contestants/new': {
-      id: '/admin/contestants/new'
-      path: '/admin/contestants/new'
-      fullPath: '/admin/contestants/new'
-      preLoaderRoute: typeof AdminContestantsNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/events/': {
-      id: '/admin/events/'
-      path: '/admin/events'
-      fullPath: '/admin/events/'
-      preLoaderRoute: typeof AdminEventsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/events/registrations': {
-      id: '/admin/events/registrations'
-      path: '/admin/events/registrations'
-      fullPath: '/admin/events/registrations'
-      preLoaderRoute: typeof AdminEventsRegistrationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/media/': {
-      id: '/admin/media/'
-      path: '/admin/media'
-      fullPath: '/admin/media/'
-      preLoaderRoute: typeof AdminMediaIndexRouteImport
+    '/admin/voting/': {
+      id: '/admin/voting/'
+      path: '/admin/voting'
+      fullPath: '/admin/voting/'
+      preLoaderRoute: typeof AdminVotingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/sponsors/': {
@@ -479,25 +437,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSponsorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/voting/': {
-      id: '/admin/voting/'
-      path: '/admin/voting'
-      fullPath: '/admin/voting/'
-      preLoaderRoute: typeof AdminVotingIndexRouteImport
+    '/admin/media/': {
+      id: '/admin/media/'
+      path: '/admin/media'
+      fullPath: '/admin/media/'
+      preLoaderRoute: typeof AdminMediaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin/generate-portrait': {
-      id: '/api/admin/generate-portrait'
-      path: '/api/admin/generate-portrait'
-      fullPath: '/api/admin/generate-portrait'
-      preLoaderRoute: typeof ApiAdminGeneratePortraitRouteImport
+    '/admin/events/': {
+      id: '/admin/events/'
+      path: '/admin/events'
+      fullPath: '/admin/events/'
+      preLoaderRoute: typeof AdminEventsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin/upload': {
-      id: '/api/admin/upload'
-      path: '/api/admin/upload'
-      fullPath: '/api/admin/upload'
-      preLoaderRoute: typeof ApiAdminUploadRouteImport
+    '/admin/contestants/': {
+      id: '/admin/contestants/'
+      path: '/admin/contestants'
+      fullPath: '/admin/contestants/'
+      preLoaderRoute: typeof AdminContestantsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/applications/': {
+      id: '/admin/applications/'
+      path: '/admin/applications'
+      fullPath: '/admin/applications/'
+      preLoaderRoute: typeof AdminApplicationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/upload': {
+      id: '/api/public/upload'
+      path: '/api/public/upload'
+      fullPath: '/api/public/upload'
+      preLoaderRoute: typeof ApiPublicUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/files/$id': {
@@ -507,11 +479,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiFilesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/upload': {
-      id: '/api/public/upload'
-      path: '/api/public/upload'
-      fullPath: '/api/public/upload'
-      preLoaderRoute: typeof ApiPublicUploadRouteImport
+    '/api/admin/upload': {
+      id: '/api/admin/upload'
+      path: '/api/admin/upload'
+      fullPath: '/api/admin/upload'
+      preLoaderRoute: typeof ApiAdminUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/generate-portrait': {
+      id: '/api/admin/generate-portrait'
+      path: '/api/admin/generate-portrait'
+      fullPath: '/api/admin/generate-portrait'
+      preLoaderRoute: typeof ApiAdminGeneratePortraitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/events/registrations': {
+      id: '/admin/events/registrations'
+      path: '/admin/events/registrations'
+      fullPath: '/admin/events/registrations'
+      preLoaderRoute: typeof AdminEventsRegistrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contestants/new': {
+      id: '/admin/contestants/new'
+      path: '/admin/contestants/new'
+      fullPath: '/admin/contestants/new'
+      preLoaderRoute: typeof AdminContestantsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contestants/$id': {
+      id: '/admin/contestants/$id'
+      path: '/admin/contestants/$id'
+      fullPath: '/admin/contestants/$id'
+      preLoaderRoute: typeof AdminContestantsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
