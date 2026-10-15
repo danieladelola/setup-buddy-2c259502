@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ---------- build stage ----------
-FROM oven/bun:1.2-alpine AS build
+FROM oven/bun:1.3-alpine AS build
 WORKDIR /app
 
 # Install deps with lockfile
