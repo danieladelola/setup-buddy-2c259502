@@ -1605,12 +1605,6 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             {NAV.map((n) => <li key={n.to}><Link to={n.to} className="hover:text-gold transition-colors">{n.label}</Link></li>)}
           </ul>
-          <h4 className="font-display text-base text-ivory mt-6 mb-4">Policies</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/refund-policy" className="hover:text-gold transition-colors">Refund Policy</Link></li>
-            <li><Link to="/cancellation-policy" className="hover:text-gold transition-colors">Cancellation Policy</Link></li>
-            <li><Link to="/shipping-policy" className="hover:text-gold transition-colors">Shipping & Delivery Policy</Link></li>
-          </ul>
         </div>
 
         <div className="lg:col-span-3">
@@ -1623,14 +1617,13 @@ export function Footer() {
         </div>
 
         <div className="lg:col-span-3">
-          <h4 className="font-display text-base text-ivory mb-4">Newsletter</h4>
-          <p className="text-sm text-ivory/65 mb-4">Receive updates on auditions, finales and impact stories.</p>
-          <form onSubmit={(e) => { e.preventDefault(); toast.success("Subscribed. Welcome to the movement."); (e.currentTarget as HTMLFormElement).reset(); }} className="flex">
-            <input type="email" required placeholder="your@email.com" className="flex-1 px-4 py-3 rounded-l-full bg-white/5 border border-white/10 border-r-0 text-sm text-ivory placeholder:text-ivory/40 focus:outline-none focus:border-gold/50" />
-            <button className="px-5 rounded-r-full bg-gradient-to-r from-gold-soft via-gold to-gold-deep text-green-deep" aria-label="Subscribe">
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
+          <h4 className="font-display text-base text-ivory mb-4">Policies</h4>
+          <p className="text-sm text-ivory/65 mb-4">How tickets, refunds and deliveries work.</p>
+          <ul className="space-y-2 text-sm">
+            <li><Link to="/refund-policy" className="hover:text-gold transition-colors">Refund Policy</Link></li>
+            <li><Link to="/cancellation-policy" className="hover:text-gold transition-colors">Cancellation Policy</Link></li>
+            <li><Link to="/shipping-policy" className="hover:text-gold transition-colors">Shipping &amp; Delivery Policy</Link></li>
+          </ul>
         </div>
       </div>
 
