@@ -10,9 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SponsorsRouteImport } from './routes/sponsors'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContestantRouteImport } from './routes/contestant'
+import { Route as CancellationPolicyRouteImport } from './routes/cancellation-policy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -36,6 +39,16 @@ const SponsorsRoute = SponsorsRouteImport.update({
   path: '/sponsors',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
+  id: '/shipping-policy',
+  path: '/shipping-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -49,6 +62,11 @@ const EventsRoute = EventsRouteImport.update({
 const ContestantRoute = ContestantRouteImport.update({
   id: '/contestant',
   path: '/contestant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
+  id: '/cancellation-policy',
+  path: '/cancellation-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -142,9 +160,12 @@ const AdminContestantsIdRoute = AdminContestantsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/contestant': typeof ContestantRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/refund-policy': typeof RefundPolicyRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
@@ -165,9 +186,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/contestant': typeof ContestantRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/refund-policy': typeof RefundPolicyRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin': typeof AdminIndexRoute
@@ -189,9 +213,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/contestant': typeof ContestantRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/refund-policy': typeof RefundPolicyRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
@@ -214,9 +241,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/cancellation-policy'
     | '/contestant'
     | '/events'
     | '/gallery'
+    | '/refund-policy'
+    | '/shipping-policy'
     | '/sponsors'
     | '/admin/login'
     | '/admin/'
@@ -237,9 +267,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/cancellation-policy'
     | '/contestant'
     | '/events'
     | '/gallery'
+    | '/refund-policy'
+    | '/shipping-policy'
     | '/sponsors'
     | '/admin/login'
     | '/admin'
@@ -260,9 +293,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/cancellation-policy'
     | '/contestant'
     | '/events'
     | '/gallery'
+    | '/refund-policy'
+    | '/shipping-policy'
     | '/sponsors'
     | '/admin/login'
     | '/admin/'
@@ -284,9 +320,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CancellationPolicyRoute: typeof CancellationPolicyRoute
   ContestantRoute: typeof ContestantRoute
   EventsRoute: typeof EventsRoute
   GalleryRoute: typeof GalleryRoute
+  RefundPolicyRoute: typeof RefundPolicyRoute
+  ShippingPolicyRoute: typeof ShippingPolicyRoute
   SponsorsRoute: typeof SponsorsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -314,6 +353,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SponsorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shipping-policy': {
+      id: '/shipping-policy'
+      path: '/shipping-policy'
+      fullPath: '/shipping-policy'
+      preLoaderRoute: typeof ShippingPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -333,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/contestant'
       fullPath: '/contestant'
       preLoaderRoute: typeof ContestantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cancellation-policy': {
+      id: '/cancellation-policy'
+      path: '/cancellation-policy'
+      fullPath: '/cancellation-policy'
+      preLoaderRoute: typeof CancellationPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -460,9 +520,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CancellationPolicyRoute: CancellationPolicyRoute,
   ContestantRoute: ContestantRoute,
   EventsRoute: EventsRoute,
   GalleryRoute: GalleryRoute,
+  RefundPolicyRoute: RefundPolicyRoute,
+  ShippingPolicyRoute: ShippingPolicyRoute,
   SponsorsRoute: SponsorsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
