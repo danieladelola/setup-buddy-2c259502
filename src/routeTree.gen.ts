@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SponsorsRouteImport } from './routes/sponsors'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
-import { Route as ContestantApplyRouteImport } from './routes/contestant-apply'
 import { Route as ContestantRouteImport } from './routes/contestant'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -45,11 +44,6 @@ const GalleryRoute = GalleryRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContestantApplyRoute = ContestantApplyRouteImport.update({
-  id: '/contestant-apply',
-  path: '/contestant-apply',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContestantRoute = ContestantRouteImport.update({
@@ -149,7 +143,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contestant': typeof ContestantRoute
-  '/contestant-apply': typeof ContestantApplyRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/sponsors': typeof SponsorsRoute
@@ -173,7 +166,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contestant': typeof ContestantRoute
-  '/contestant-apply': typeof ContestantApplyRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/sponsors': typeof SponsorsRoute
@@ -198,7 +190,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contestant': typeof ContestantRoute
-  '/contestant-apply': typeof ContestantApplyRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/sponsors': typeof SponsorsRoute
@@ -224,7 +215,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contestant'
-    | '/contestant-apply'
     | '/events'
     | '/gallery'
     | '/sponsors'
@@ -248,7 +238,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contestant'
-    | '/contestant-apply'
     | '/events'
     | '/gallery'
     | '/sponsors'
@@ -272,7 +261,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contestant'
-    | '/contestant-apply'
     | '/events'
     | '/gallery'
     | '/sponsors'
@@ -297,7 +285,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContestantRoute: typeof ContestantRoute
-  ContestantApplyRoute: typeof ContestantApplyRoute
   EventsRoute: typeof EventsRoute
   GalleryRoute: typeof GalleryRoute
   SponsorsRoute: typeof SponsorsRoute
@@ -339,13 +326,6 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contestant-apply': {
-      id: '/contestant-apply'
-      path: '/contestant-apply'
-      fullPath: '/contestant-apply'
-      preLoaderRoute: typeof ContestantApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contestant': {
@@ -481,7 +461,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContestantRoute: ContestantRoute,
-  ContestantApplyRoute: ContestantApplyRoute,
   EventsRoute: EventsRoute,
   GalleryRoute: GalleryRoute,
   SponsorsRoute: SponsorsRoute,
