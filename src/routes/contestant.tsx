@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHero, Contestants, Personalities, Footer } from "@/components/site";
+import { PageHero, Contestants, Personalities, Voting, Footer } from "@/components/site";
 
 
 export const Route = createFileRoute("/contestant")({
@@ -31,7 +31,9 @@ function ContestantPage() {
           </>
         }
       />
-      
+
+      <Voting />
+
       <Contestants
         scope="past"
         label="Past Contestants"

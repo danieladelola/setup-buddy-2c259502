@@ -192,6 +192,11 @@ export function ensureSchema(): Promise<void> {
       ALTER TABLE contestant_applications ADD COLUMN IF NOT EXISTS fullbody_url   TEXT;
       ALTER TABLE contestant_applications ADD COLUMN IF NOT EXISTS nrc_url        TEXT;
 
+      ALTER TABLE votes   ADD COLUMN IF NOT EXISTS payment_ref TEXT;
+      ALTER TABLE tickets ADD COLUMN IF NOT EXISTS payment_ref TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS votes_payment_ref_key   ON votes(payment_ref);
+      CREATE UNIQUE INDEX IF NOT EXISTS tickets_payment_ref_key ON tickets(payment_ref);
+
     `);
 
     // Seed initial admin from env if table is empty
