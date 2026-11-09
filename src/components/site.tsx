@@ -1089,7 +1089,6 @@ export function Voting() {
     </Dialog>
   );
 }
-}
 
 // ---------- Events ----------
 
