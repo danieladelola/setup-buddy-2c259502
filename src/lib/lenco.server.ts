@@ -8,9 +8,17 @@ export async function fetchLencoStatus(reference: string): Promise<LencoStatus |
   const token = process.env.LENCO_SECRET_KEY;
   if (!token) throw new Error("Payments are not configured yet.");
   const res = await fetch(`${LENCO_API}/collections/status/${encodeURIComponent(reference)}`, {
-    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    // Lenco's firewall rejects requests without a User-Agent.
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json", "User-Agent": "MissAgricultureZambia/1.0" },
   });
   if (res.status === 404) return null;
+  if (res.status === 400) {
+    // Lenco returns 400 "Collection details was not found" until the customer starts paying.
+    const body = (await res.json().catch(() => null)) as { message?: string } | null;
+    if (body?.message?.toLowerCase().includes("not found")) return null;
+    console.error("Lenco status 400", body);
+    throw new Error("Could not check the payment. Please try again.");
+  }
   if (!res.ok) {
     console.error("Lenco status error", res.status, await res.text().catch(() => ""));
     throw new Error("Could not reach the payment provider. Please try again.");
