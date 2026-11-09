@@ -907,8 +907,7 @@ export function Contestants({
                       type="button"
                       onClick={() => {
                         window.dispatchEvent(new CustomEvent("vote-for", { detail: c.id }));
-                        document.getElementById("vote")?.scrollIntoView({ behavior: "smooth" });
-                      }}
+                                              }}
                       className="w-full px-5 py-3 rounded-full bg-gold text-green-deep text-sm font-semibold tracking-wide hover:opacity-90 transition"
                     >
                       Vote for {c.full_name.split(" ")[0]}
@@ -1001,6 +1000,7 @@ export function Voting() {
       else if (outcome === "closed") toast.info("Payment window closed. Your votes were not counted.");
       else if (outcome === "failed") toast.error("Payment failed. Your votes were not counted.");
       else toast.info(`Waiting for your payment to confirm. Your ${n} for ${name} will be added automatically once it does.`);
+      if (outcome !== "closed") { setContestantId(null); setQuantity(1); }
       qc.invalidateQueries({ queryKey: ["public", "leaderboard"] });
       qc.invalidateQueries({ queryKey: ["public", "contestants"] });
     },
@@ -1011,54 +1011,29 @@ export function Voting() {
 
   const noCampaign = !campaignQ.isLoading && !campaign;
 
-  return (
-    <section id="vote" className="py-20 md:py-28 bg-gradient-to-b from-secondary/40 to-background">
-      <div className="container-luxe grid lg:grid-cols-2 gap-14">
-        <Reveal>
-          <div>
-            <SectionLabel>Voting Platform</SectionLabel>
-            <h2 className="font-display text-4xl md:text-6xl leading-[1.05]">
-              Every vote <span className="italic text-gradient-gold">writes history.</span>
-            </h2>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              {campaign
-                ? campaign.description ||
-                  `Cast your vote in ${campaign.name}. Secure, verified and transparent.`
-                : "Secure, verified, and transparent. Vote for your favourite contestant through our protected platform."}
-            </p>
+  const selected = contestants.find((c) => c.id === contestantId);
 
-            {noCampaign ? (
-              <div className="mt-8 p-6 rounded-2xl border border-dashed border-border bg-card/60 text-sm text-muted-foreground">
-                Voting is currently closed. Please check back when the next campaign opens.
-              </div>
-            ) : (
+  return (
+    <Dialog open={contestantId !== null} onOpenChange={(o) => { if (!o && !mutate.isPending) { setContestantId(null); setQuantity(1); } }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Vote for {selected?.full_name ?? "contestant"}</DialogTitle>
+          <DialogDescription>
+            {campaign ? `${campaign.name} · ${pricePerVote > 0 ? `ZMW ${pricePerVote.toFixed(2)} per vote` : "Free voting"}` : "Voting"}
+          </DialogDescription>
+        </DialogHeader>
+        {noCampaign ? (
+          <div className="p-6 rounded-2xl border border-dashed border-border bg-card/60 text-sm text-muted-foreground">
+            Voting is currently closed. Please check back when the next campaign opens.
+          </div>
+        ) : (
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   mutate.mutate();
                 }}
-                className="mt-8 space-y-4"
+                className="space-y-4"
               >
-                <div>
-                  <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                    Contestant
-                  </label>
-                  <select
-                    value={contestantId ?? ""}
-                    onChange={(e) => setContestantId(e.target.value ? Number(e.target.value) : null)}
-                    className="mt-1 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                    required
-                  >
-                    <option value="">Select a contestant...</option>
-                    {contestants.map((c, i) => (
-                      <option key={c.id} value={c.id}>
-                        #{String(i + 1).padStart(2, "0")} — {c.full_name}
-                        {c.province ? ` (${c.province})` : ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -1104,62 +1079,14 @@ export function Voting() {
                 <button
                   type="submit"
                   disabled={mutate.isPending || !contestantId}
-                  className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-green-deep text-ivory font-semibold text-sm tracking-wide hover:bg-green-forest transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full justify-center inline-flex items-center gap-3 px-7 py-4 rounded-full bg-green-deep text-ivory font-semibold text-sm tracking-wide hover:bg-green-forest transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {mutate.isPending ? "Processing..." : pricePerVote > 0 ? `Pay ZMW ${totalCost.toFixed(2)} & Vote` : "Cast Your Vote"} <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
-            )}
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.1}>
-          <div className="p-8 rounded-3xl bg-card border border-border/60 shadow-[var(--shadow-luxe)]">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="text-[10px] tracking-[0.3em] uppercase text-gold-deep">Live Ranking Board</div>
-                <h3 className="font-display text-2xl mt-1">Top Contestants</h3>
-              </div>
-              <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Live
-              </span>
-            </div>
-
-            {boardQ.isLoading && (
-              <div className="py-12 text-center text-sm text-muted-foreground">Loading leaderboard...</div>
-            )}
-            {!boardQ.isLoading && board.length === 0 && (
-              <div className="py-12 text-center text-sm text-muted-foreground">No votes recorded yet.</div>
-            )}
-
-            <div className="space-y-5">
-              {board.map((r, i) => (
-                <div key={r.id}>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <div className="flex items-center gap-3">
-                      <span className="font-display text-lg text-gold-deep w-6">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="font-medium text-foreground">{r.full_name}</span>
-                      {r.province && (
-                        <span className="text-xs text-muted-foreground">• {r.province}</span>
-                      )}
-                    </div>
-                    <span className="tabular-nums font-semibold">{r.votes.toLocaleString()}</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(r.votes / max) * 100}%` }}
-                      transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-                      className="h-full bg-gradient-to-r from-gold-soft via-gold to-gold-deep"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
