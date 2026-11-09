@@ -22,9 +22,9 @@ export const listCampaigns = createServerFn({ method: "GET" }).handler(async () 
   const { getDb } = await import("./db.server");
   const sql = getDb();
   const rows = await sql`
-    SELECT c.id, c.name, c.status, c.price_per_vote,
-           to_char(c.starts_at,'YYYY-MM-DD HH24:MI') AS starts_at,
-           to_char(c.ends_at,'YYYY-MM-DD HH24:MI')   AS ends_at,
+    SELECT c.id, c.name, c.description, c.status, c.price_per_vote::float AS price_per_vote,
+           to_char(c.starts_at,'YYYY-MM-DD"T"HH24:MI') AS starts_at,
+           to_char(c.ends_at,'YYYY-MM-DD"T"HH24:MI')   AS ends_at,
            COALESCE((SELECT COUNT(*) FROM votes v WHERE v.campaign_id = c.id AND v.status='valid'),0)::int AS valid_votes,
            COALESCE((SELECT COUNT(*) FROM votes v WHERE v.campaign_id = c.id AND v.status<>'valid'),0)::int AS flagged_votes,
            COALESCE((SELECT SUM(amount) FROM votes v WHERE v.campaign_id = c.id AND v.status='valid'),0)::float AS revenue
@@ -32,7 +32,7 @@ export const listCampaigns = createServerFn({ method: "GET" }).handler(async () 
     ORDER BY c.id DESC
   `;
   return rows as unknown as Array<{
-    id: number; name: string; status: string; price_per_vote: number;
+    id: number; name: string; description: string | null; status: string; price_per_vote: number;
     starts_at: string | null; ends_at: string | null;
     valid_votes: number; flagged_votes: number; revenue: number;
   }>;
@@ -57,6 +57,30 @@ export const createCampaign = createServerFn({ method: "POST" })
     const id = (rows[0] as { id: number }).id;
     await logActivity("campaign.created", `Campaign created: ${data.name}`, { id });
     return { id };
+  });
+
+export const updateCampaign = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    campaignInput.extend({ id: z.coerce.number().int().positive() }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { requireAdminSession } = await import("./admin-guard.server");
+    await requireAdminSession();
+    if (data.starts_at && data.ends_at && data.ends_at <= data.starts_at) {
+      throw new Error("End time must be after the start time.");
+    }
+    const { ensureSchema, logActivity } = await import("./schema.server");
+    await ensureSchema();
+    const { getDb } = await import("./db.server");
+    const sql = getDb();
+    await sql`
+      UPDATE campaigns SET name = ${data.name}, description = ${data.description ?? null},
+        starts_at = ${data.starts_at || null}, ends_at = ${data.ends_at || null},
+        price_per_vote = ${data.price_per_vote}, status = ${data.status}
+      WHERE id = ${data.id}
+    `;
+    await logActivity("campaign.updated", `Campaign updated: ${data.name}`, { id: data.id });
+    return { ok: true as const };
   });
 
 export const setCampaignStatus = createServerFn({ method: "POST" })

@@ -12,6 +12,7 @@ import {
   X,
   Handshake,
   ClipboardList,
+  SlidersHorizontal,
 } from "lucide-react";
 import { adminLogout } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, children: [] },
   { to: "/admin/contestants", label: "Contestants", icon: Users, exact: false, children: [] },
+  { to: "/admin/voting", label: "Voting settings", icon: SlidersHorizontal, exact: false, children: [] },
   { to: "/admin/applications", label: "Applications", icon: ClipboardList, exact: false, children: [] },
   
   {
