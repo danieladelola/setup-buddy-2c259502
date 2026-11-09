@@ -909,7 +909,7 @@ export function Contestants({
                         window.dispatchEvent(new CustomEvent("vote-for", { detail: c.id }));
                         document.getElementById("vote")?.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className="w-full px-5 py-3 rounded-full bg-gradient-gold text-green-deep text-sm font-semibold tracking-wide hover:opacity-90 transition"
+                      className="w-full px-5 py-3 rounded-full bg-gold text-green-deep text-sm font-semibold tracking-wide hover:opacity-90 transition"
                     >
                       Vote for {c.full_name.split(" ")[0]}
                     </button>
