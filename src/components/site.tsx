@@ -13,6 +13,8 @@ import { listPublicContestants, listPublicEvents, listPublicMedia, type PublicEv
 import { listPublicSponsors, type PublicSponsor } from "@/lib/sponsors.functions";
 import { castVote, getLeaderboard, getPublicActiveCampaign } from "@/lib/voting-public.functions";
 import { submitRsvp } from "@/lib/rsvp.functions";
+import { createTicketOrder, getLencoPublicKey, verifyPayment } from "@/lib/payments.functions";
+import { openLencoCheckout } from "@/lib/lenco-client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -916,6 +918,8 @@ export function Voting() {
   const fetchLeaderboard = useServerFn(getLeaderboard);
   const fetchContestants = useServerFn(listPublicContestants);
   const submitVote = useServerFn(castVote);
+  const fetchKey = useServerFn(getLencoPublicKey);
+  const verify = useServerFn(verifyPayment);
 
   const campaignQ = useQuery({
     queryKey: ["public", "active-campaign"],
@@ -945,23 +949,38 @@ export function Voting() {
   const totalCost = quantity * pricePerVote;
 
   const mutate = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (!contestantId) throw new Error("Please select a contestant.");
       if (!Number.isFinite(quantity) || quantity < 1) throw new Error("Quantity must be at least 1.");
-      return submitVote({
+      if (pricePerVote > 0 && !email.trim()) throw new Error("Please enter your email to pay for votes.");
+      const res = await submitVote({
         data: {
           contestant_id: contestantId,
           quantity,
           voter_email: email.trim() || undefined,
         },
       });
+      if (res.status === "valid" || !res.payment_ref) return { res, outcome: "free" as const };
+      const { key } = await fetchKey();
+      if (!key) throw new Error("Online payments are not available right now.");
+      const opened = await openLencoCheckout({
+        publicKey: key,
+        reference: res.payment_ref,
+        email: email.trim(),
+        amount: res.amount,
+        label: `${res.quantity} vote${res.quantity === 1 ? "" : "s"} for ${res.contestant.full_name}`,
+      });
+      if (opened === "closed") return { res, outcome: "closed" as const };
+      const check = await verify({ data: { reference: res.payment_ref } });
+      return { res, outcome: check.state };
     },
-    onSuccess: (res) => {
-      if (res.status === "valid") {
-        toast.success(`Recorded ${res.quantity} vote${res.quantity === 1 ? "" : "s"} for ${res.contestant.full_name}.`);
-      } else {
-        toast.success(`Vote queued for ${res.contestant.full_name}. Awaiting payment confirmation.`);
-      }
+    onSuccess: ({ res, outcome }) => {
+      const name = res.contestant.full_name;
+      const n = `${res.quantity} vote${res.quantity === 1 ? "" : "s"}`;
+      if (outcome === "free" || outcome === "paid") toast.success(`Payment confirmed — ${n} added for ${name}. Thank you!`);
+      else if (outcome === "closed") toast.info("Payment window closed. Your votes were not counted.");
+      else if (outcome === "failed") toast.error("Payment failed. Your votes were not counted.");
+      else toast.info(`Waiting for your payment to confirm. Your ${n} for ${name} will be added automatically once it does.`);
       qc.invalidateQueries({ queryKey: ["public", "leaderboard"] });
       qc.invalidateQueries({ queryKey: ["public", "contestants"] });
     },
@@ -1037,12 +1056,13 @@ export function Voting() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                      Email (optional)
+                      Email{pricePerVote > 0 ? "" : " (optional)"}
                     </label>
                     <input
                       type="email"
                       value={email}
                       maxLength={200}
+                      required={pricePerVote > 0}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       className="mt-1 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
@@ -1066,7 +1086,7 @@ export function Voting() {
                   disabled={mutate.isPending || !contestantId}
                   className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-green-deep text-ivory font-semibold text-sm tracking-wide hover:bg-green-forest transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {mutate.isPending ? "Recording..." : "Cast Your Vote"} <ArrowRight className="w-4 h-4" />
+                  {mutate.isPending ? "Processing..." : pricePerVote > 0 ? `Pay ZMW ${totalCost.toFixed(2)} & Vote` : "Cast Your Vote"} <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
             )}
@@ -1167,6 +1187,7 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
   });
   const events = q.data ?? [];
   const [registerFor, setRegisterFor] = useState<PublicEvent | null>(null);
+  const [buyFor, setBuyFor] = useState<PublicEvent | null>(null);
 
   return (
     <section id="events" className="py-20 md:py-28 bg-background">
@@ -1251,12 +1272,17 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
 
                   {/* CTA */}
                   <div className="flex items-center justify-start md:justify-center px-6 pb-5 md:pb-0 md:pr-7 md:pl-0">
-                    <button
-                      onClick={() => setRegisterFor(e)}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-foreground text-ivory font-medium text-sm hover:bg-green-deep transition-colors duration-200"
-                    >
-                      Register <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <div className="flex flex-col items-start md:items-center gap-1.5">
+                      {e.ticket_price > 0 && (
+                        <span className="font-display text-lg tabular-nums text-foreground">ZMW {e.ticket_price.toFixed(2)}</span>
+                      )}
+                      <button
+                        onClick={() => (e.ticket_price > 0 ? setBuyFor(e) : setRegisterFor(e))}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-foreground text-ivory font-medium text-sm hover:bg-green-deep transition-colors duration-200"
+                      >
+                        {e.ticket_price > 0 ? "Buy Ticket" : "Register"} <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </Reveal>
@@ -1266,6 +1292,7 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
       </div>
 
       <RegisterDialog event={registerFor} onOpenChange={(open) => { if (!open) setRegisterFor(null); }} />
+      <TicketDialog event={buyFor} onOpenChange={(open) => { if (!open) setBuyFor(null); }} />
     </section>
   );
 }
@@ -1350,6 +1377,106 @@ function RegisterDialog({
             <Button type="submit" disabled={mutation.isPending}
               className="bg-foreground text-ivory hover:bg-green-deep">
               {mutation.isPending ? "Submitting..." : "Confirm registration"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function TicketDialog({
+  event,
+  onOpenChange,
+}: {
+  event: PublicEvent | null;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const createOrder = useServerFn(createTicketOrder);
+  const fetchKey = useServerFn(getLencoPublicKey);
+  const verify = useServerFn(verifyPayment);
+  const [form, setForm] = useState({ holder_name: "", email: "", phone: "", quantity: 1 });
+  const price = event?.ticket_price ?? 0;
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!event) throw new Error("No event selected.");
+      const order = await createOrder({ data: { event_id: event.id, ...form } });
+      const { key } = await fetchKey();
+      if (!key) throw new Error("Online payments are not available right now.");
+      const opened = await openLencoCheckout({
+        publicKey: key,
+        reference: order.reference,
+        email: order.email,
+        amount: order.amount,
+        label: order.label,
+        phone: form.phone,
+        name: form.holder_name,
+      });
+      if (opened === "closed") return "closed" as const;
+      return (await verify({ data: { reference: order.reference } })).state;
+    },
+    onSuccess: (state) => {
+      if (state === "paid") {
+        toast.success("Payment confirmed — your ticket is booked! Check your email for details.");
+        setForm({ holder_name: "", email: "", phone: "", quantity: 1 });
+        onOpenChange(false);
+      } else if (state === "closed") toast.info("Payment window closed. Your ticket was not booked.");
+      else if (state === "failed") toast.error("Payment failed. Your ticket was not booked.");
+      else {
+        toast.info("Waiting for your payment to confirm. Your ticket will be booked automatically once it does.");
+        onOpenChange(false);
+      }
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not start payment."),
+  });
+
+  return (
+    <Dialog open={!!event} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-2xl">Tickets for {event?.title}</DialogTitle>
+          <DialogDescription>
+            ZMW {price.toFixed(2)} per ticket · Pay with mobile money (MTN, Airtel, Zamtel) or card.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate();
+          }}
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="tkt-name">Full name</Label>
+            <Input id="tkt-name" required minLength={2} value={form.holder_name}
+              onChange={(e) => setForm({ ...form, holder_name: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="tkt-email">Email</Label>
+            <Input id="tkt-email" type="email" required value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="tkt-phone">Phone</Label>
+              <Input id="tkt-phone" type="tel" placeholder="097..." value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="tkt-qty">Tickets</Label>
+              <Input id="tkt-qty" type="number" min={1} max={20} value={form.quantity}
+                onChange={(e) => setForm({ ...form, quantity: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })} />
+            </div>
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground">Total</span>
+            <span className="font-display text-lg tabular-nums">ZMW {(price * form.quantity).toFixed(2)}</span>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={mutation.isPending} className="bg-foreground text-ivory hover:bg-green-deep">
+              {mutation.isPending ? "Processing..." : `Pay ZMW ${(price * form.quantity).toFixed(2)}`}
             </Button>
           </DialogFooter>
         </form>

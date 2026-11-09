@@ -32,6 +32,7 @@ import { Route as AdminVotingIndexRouteImport } from './routes/admin/voting.inde
 import { Route as ApiAdminGeneratePortraitRouteImport } from './routes/api/admin/generate-portrait'
 import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
 import { Route as ApiFilesIdRouteImport } from './routes/api/files.$id'
+import { Route as ApiPublicLencoWebhookRouteImport } from './routes/api/public/lenco-webhook'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 
 const IndexRoute = IndexRouteImport.update({
@@ -151,6 +152,11 @@ const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
   path: '/api/files/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicLencoWebhookRoute = ApiPublicLencoWebhookRouteImport.update({
+  id: '/api/public/lenco-webhook',
+  path: '/api/public/lenco-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   id: '/api/public/upload',
   path: '/api/public/upload',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/generate-portrait': typeof ApiAdminGeneratePortraitRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/files/$id': typeof ApiFilesIdRoute
+  '/api/public/lenco-webhook': typeof ApiPublicLencoWebhookRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
   '/admin/contestants/': typeof AdminContestantsIndexRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/api/admin/generate-portrait': typeof ApiAdminGeneratePortraitRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/files/$id': typeof ApiFilesIdRoute
+  '/api/public/lenco-webhook': typeof ApiPublicLencoWebhookRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/admin/applications': typeof AdminApplicationsIndexRoute
   '/admin/contestants': typeof AdminContestantsIndexRoute
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/api/admin/generate-portrait': typeof ApiAdminGeneratePortraitRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/files/$id': typeof ApiFilesIdRoute
+  '/api/public/lenco-webhook': typeof ApiPublicLencoWebhookRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
   '/admin/contestants/': typeof AdminContestantsIndexRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/api/admin/generate-portrait'
     | '/api/admin/upload'
     | '/api/files/$id'
+    | '/api/public/lenco-webhook'
     | '/api/public/upload'
     | '/admin/applications/'
     | '/admin/contestants/'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/api/admin/generate-portrait'
     | '/api/admin/upload'
     | '/api/files/$id'
+    | '/api/public/lenco-webhook'
     | '/api/public/upload'
     | '/admin/applications'
     | '/admin/contestants'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/api/admin/generate-portrait'
     | '/api/admin/upload'
     | '/api/files/$id'
+    | '/api/public/lenco-webhook'
     | '/api/public/upload'
     | '/admin/applications/'
     | '/admin/contestants/'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   ApiAdminGeneratePortraitRoute: typeof ApiAdminGeneratePortraitRoute
   ApiAdminUploadRoute: typeof ApiAdminUploadRoute
   ApiFilesIdRoute: typeof ApiFilesIdRoute
+  ApiPublicLencoWebhookRoute: typeof ApiPublicLencoWebhookRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
   AdminApplicationsIndexRoute: typeof AdminApplicationsIndexRoute
   AdminContestantsIndexRoute: typeof AdminContestantsIndexRoute
@@ -507,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiFilesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/lenco-webhook': {
+      id: '/api/public/lenco-webhook'
+      path: '/api/public/lenco-webhook'
+      fullPath: '/api/public/lenco-webhook'
+      preLoaderRoute: typeof ApiPublicLencoWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/upload': {
       id: '/api/public/upload'
       path: '/api/public/upload'
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminGeneratePortraitRoute: ApiAdminGeneratePortraitRoute,
   ApiAdminUploadRoute: ApiAdminUploadRoute,
   ApiFilesIdRoute: ApiFilesIdRoute,
+  ApiPublicLencoWebhookRoute: ApiPublicLencoWebhookRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
   AdminApplicationsIndexRoute: AdminApplicationsIndexRoute,
   AdminContestantsIndexRoute: AdminContestantsIndexRoute,
