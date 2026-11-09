@@ -21,6 +21,7 @@ export type PublicEvent = {
   starts_at: string | null;
   description: string | null;
   banner_url: string | null;
+  ticket_price: number;
 };
 
 export type PublicMedia = {
@@ -71,7 +72,7 @@ export const listPublicEvents = createServerFn({ method: "GET" }).handler(
     const rows = await sql`
       SELECT id, title, type, location,
              to_char(starts_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') AS starts_at,
-             description, banner_url
+             description, banner_url, ticket_price::float AS ticket_price
       FROM events
       WHERE status IN ('published','draft')
       ORDER BY starts_at ASC NULLS LAST, id ASC

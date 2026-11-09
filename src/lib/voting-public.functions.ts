@@ -110,6 +110,7 @@ export type CastVoteResult = {
   quantity: number;
   amount: number;
   status: "valid" | "pending";
+  payment_ref: string | null;
   contestant: { id: number; full_name: string; votes: number };
   campaign: { id: number; name: string; price_per_vote: number };
 };
@@ -154,16 +155,19 @@ export const castVote = createServerFn({ method: "POST" })
     //    accepted as 'valid' when price is 0, otherwise 'pending'.
     const paymentConfirmed = campaign.price_per_vote === 0;
     const status: "valid" | "pending" = paymentConfirmed ? "valid" : "pending";
+    if (!paymentConfirmed && !data.voter_email) throw new Error("Please enter your email to pay for votes.");
+    const { newReference } = await import("./lenco.server");
+    const payment_ref = paymentConfirmed ? null : newReference("vote");
 
     // 6) Atomic insert + counter bump.
     const { vote_id, newVotes } = await sql.begin(async (tx) => {
       const inserted = await tx`
         INSERT INTO votes (
           campaign_id, contestant_id, quantity, amount,
-          voter_email, voter_ip, status
+          voter_email, voter_ip, status, payment_ref
         ) VALUES (
           ${campaign.id}, ${data.contestant_id}, ${data.quantity}, ${amount},
-          ${data.voter_email ?? null}, ${voter_ip}, ${status}
+          ${data.voter_email ?? null}, ${voter_ip}, ${status}, ${payment_ref}
         )
         RETURNING id
       `;
@@ -188,6 +192,7 @@ export const castVote = createServerFn({ method: "POST" })
       quantity: data.quantity,
       amount,
       status,
+      payment_ref,
       contestant: { id: contestant.id, full_name: contestant.full_name, votes: newVotes },
       campaign: { id: campaign.id, name: campaign.name, price_per_vote: campaign.price_per_vote },
     };
