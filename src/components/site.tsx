@@ -1000,6 +1000,7 @@ export function Voting() {
       else if (outcome === "closed") toast.info("Payment window closed. Your votes were not counted.");
       else if (outcome === "failed") toast.error("Payment failed. Your votes were not counted.");
       else toast.info(`Waiting for your payment to confirm. Your ${n} for ${name} will be added automatically once it does.`);
+      if (outcome !== "closed") { setContestantId(null); setQuantity(1); }
       qc.invalidateQueries({ queryKey: ["public", "leaderboard"] });
       qc.invalidateQueries({ queryKey: ["public", "contestants"] });
     },
