@@ -901,6 +901,20 @@ export function Contestants({
                     <div className="font-display text-2xl text-ivory">{c.full_name}</div>
                   </div>
                 </div>
+                {scope === "active" && (
+                  <div className="p-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent("vote-for", { detail: c.id }));
+                        document.getElementById("vote")?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="w-full px-5 py-3 rounded-full bg-gradient-gold text-green-deep text-sm font-semibold tracking-wide hover:opacity-90 transition"
+                    >
+                      Vote for {c.full_name.split(" ")[0]}
+                    </button>
+                  </div>
+                )}
               </div>
             </Reveal>
           ))}
@@ -940,6 +954,12 @@ export function Voting() {
   const [contestantId, setContestantId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const onVoteFor = (e: Event) => setContestantId(Number((e as CustomEvent).detail));
+    window.addEventListener("vote-for", onVoteFor);
+    return () => window.removeEventListener("vote-for", onVoteFor);
+  }, []);
 
   const campaign = campaignQ.data;
   const board = boardQ.data ?? [];
