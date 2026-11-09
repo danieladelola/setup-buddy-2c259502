@@ -13,11 +13,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Play, Pause, Square, Trash2, ShieldAlert } from "lucide-react";
+import { Play, Pause, Square, Trash2, ShieldAlert, Pencil } from "lucide-react";
 import { requireAdmin } from "@/lib/admin.functions";
 import {
   listCampaigns,
   createCampaign,
+  updateCampaign,
   setCampaignStatus,
   deleteCampaign,
   detectDuplicates,
@@ -57,6 +58,7 @@ function VotingPage() {
   const listFn = useServerFn(listCampaigns);
   const reportsFn = useServerFn(getVotingReports);
   const createFn = useServerFn(createCampaign);
+  const updateFn = useServerFn(updateCampaign);
   const setStatusFn = useServerFn(setCampaignStatus);
   const delFn = useServerFn(deleteCampaign);
   const dedupFn = useServerFn(detectDuplicates);
@@ -100,9 +102,13 @@ function VotingPage() {
     status: "draft" as "draft" | "active" | "paused" | "ended",
   });
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const emptyForm = { name: "", description: "", starts_at: "", ends_at: "", price_per_vote: "0", status: "draft" as "draft" | "active" | "paused" | "ended" };
   const create = useMutation({
-    mutationFn: createFn,
+    mutationFn: async (vars: { data: import("@/lib/voting.functions").CampaignInput }): Promise<unknown> =>
+      editingId ? updateFn({ data: { ...vars.data, id: editingId } }) : createFn(vars),
     onSuccess: () => {
+      setEditingId(null);
       setOpen(false);
       setForm({ name: "", description: "", starts_at: "", ends_at: "", price_per_vote: "0", status: "draft" });
       refresh();
@@ -113,8 +119,8 @@ function VotingPage() {
 
   return (
     <AdminShell
-      title="Voting"
-      subtitle="Campaigns, real-time analytics, and fraud monitoring."
+      title="Voting settings"
+      subtitle="Voting dates, price per vote, analytics and fraud checks."
       email={email}
       actions={
         <>
@@ -126,7 +132,7 @@ function VotingPage() {
             <ShieldAlert className="mr-2 h-4 w-4" />
             {dedup.isPending ? "Scanning..." : "Run fraud scan"}
           </Button>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setEditingId(null); setForm(emptyForm); create.reset(); } }}>
             <DialogTrigger asChild>
               <Button className="bg-[#1b4332] hover:bg-[#163828] text-white">
                 + New campaign
@@ -134,7 +140,7 @@ function VotingPage() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>New voting campaign</DialogTitle>
+                <DialogTitle>{editingId ? "Edit voting settings" : "New voting campaign"}</DialogTitle>
               </DialogHeader>
               <form
                 className="space-y-3"
@@ -195,13 +201,32 @@ function VotingPage() {
                     onChange={(e) => setForm({ ...form, price_per_vote: e.target.value })}
                   />
                 </div>
+                <div>
+                  <Label>Status</Label>
+                  <select
+                    className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    value={form.status}
+                    onChange={(e) => setForm({ ...form, status: e.target.value as typeof form.status })}
+                  >
+                    <option value="draft">Draft (not visible)</option>
+                    <option value="active">Active (voting open within window)</option>
+                    <option value="paused">Paused</option>
+                    <option value="ended">Ended</option>
+                  </select>
+                  <p className="mt-1 text-xs text-[#1b2a22]/60">
+                    Public voting is open only when status is Active and the current time is between start and end. Set price to 0 for free votes.
+                  </p>
+                </div>
+                {create.error && (
+                  <p className="text-sm text-red-700">{(create.error as Error).message}</p>
+                )}
                 <div className="flex justify-end">
                   <Button
                     type="submit"
                     disabled={create.isPending}
                     className="bg-[#1b4332] hover:bg-[#163828] text-white"
                   >
-                    {create.isPending ? "Creating..." : "Create campaign"}
+                    {create.isPending ? "Saving..." : editingId ? "Save changes" : "Create campaign"}
                   </Button>
                 </div>
               </form>
@@ -273,7 +298,7 @@ function VotingPage() {
                 <td className="px-4 py-3 font-medium text-[#1b2a22]">{c.name}</td>
                 <td className="px-4 py-3"><Badge className={STATUS_COLORS[c.status]}>{c.status}</Badge></td>
                 <td className="px-4 py-3 text-[#1b2a22]/70">
-                  {(c.starts_at ?? "-") + " -> " + (c.ends_at ?? "-")}
+                  {(c.starts_at?.replace("T", " ") ?? "-") + " -> " + (c.ends_at?.replace("T", " ") ?? "-")}
                 </td>
                 <td className="px-4 py-3 tabular-nums">ZMW {Number(c.price_per_vote).toFixed(2)}</td>
                 <td className="px-4 py-3 tabular-nums">{c.valid_votes}</td>
@@ -281,6 +306,21 @@ function VotingPage() {
                 <td className="px-4 py-3 tabular-nums">ZMW {Number(c.revenue).toLocaleString()}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
+                    <Button size="sm" variant="ghost" title="Edit"
+                      onClick={() => {
+                        setEditingId(c.id);
+                        setForm({
+                          name: c.name,
+                          description: c.description ?? "",
+                          starts_at: c.starts_at ?? "",
+                          ends_at: c.ends_at ?? "",
+                          price_per_vote: String(c.price_per_vote),
+                          status: c.status as typeof form.status,
+                        });
+                        setOpen(true);
+                      }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button size="sm" variant="ghost" title="Activate"
                       onClick={() => setStatus.mutate({ id: c.id, status: "active" })}>
                       <Play className="h-4 w-4 text-emerald-700" />
