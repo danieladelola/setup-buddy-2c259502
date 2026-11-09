@@ -105,7 +105,7 @@ function VotingPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const emptyForm = { name: "", description: "", starts_at: "", ends_at: "", price_per_vote: "0", status: "draft" as "draft" | "active" | "paused" | "ended" };
   const create = useMutation({
-    mutationFn: (vars: { data: Parameters<typeof createFn>[0]["data"] }) =>
+    mutationFn: async (vars: { data: import("@/lib/voting.functions").CampaignInput }): Promise<unknown> =>
       editingId ? updateFn({ data: { ...vars.data, id: editingId } }) : createFn(vars),
     onSuccess: () => {
       setEditingId(null);
