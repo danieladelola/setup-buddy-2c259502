@@ -7,6 +7,8 @@ export const Route = createFileRoute("/contestant")({
     meta: [
       { title: "Contestants — Miss Agriculture Zambia 2027" },
       { name: "description", content: "Meet the Miss Agriculture Zambia 2027 contestants, view live voting and discover the personalities shaping the next edition." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:title", content: "Contestants — Miss Agriculture Zambia 2027" },
       { property: "og:description", content: "Meet the women shaping tomorrow at Miss Agriculture Zambia 2027. Vote, follow, and support." },
     ],
