@@ -32,15 +32,6 @@ export const Route = createFileRoute("/admin/events/")({
   component: EventsPage,
 });
 
-const TYPES = [
-  { v: "audition", l: "Audition" },
-  { v: "workshop", l: "Workshop" },
-  { v: "community_outreach", l: "Community outreach" },
-  { v: "grand_finale", l: "Grand finale" },
-  { v: "sponsorship", l: "Sponsorship event" },
-  { v: "agricultural_exhibition", l: "Agricultural exhibition" },
-] as const;
-
 const STATUS_COLORS: Record<string, string> = {
   draft: "bg-slate-200 text-slate-800",
   published: "bg-emerald-100 text-emerald-900",
@@ -77,7 +68,7 @@ function EventsPage() {
 
   type FormState = {
     title: string;
-    type: (typeof TYPES)[number]["v"];
+    type: string;
     location: string;
     starts_at: string;
     ends_at: string;
@@ -104,7 +95,7 @@ function EventsPage() {
     const ev = await getFn({ data: { id } });
     setEditForm({
       title: ev.title,
-      type: ev.type as FormState["type"],
+      type: ev.type,
       location: ev.location ?? "",
       starts_at: ev.starts_at ?? "",
       ends_at: ev.ends_at ?? "",
@@ -185,12 +176,8 @@ function EventsPage() {
                 <Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
               </Row>
               <Row><Label>Type</Label>
-                <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as typeof form.type })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {TYPES.map((t) => <SelectItem key={t.v} value={t.v}>{t.l}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <Input required placeholder="e.g. Audition, Workshop, Gala, Grand Finale"
+                  value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} />
               </Row>
               <Row><Label>Location</Label>
                 <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
@@ -327,13 +314,9 @@ function EventsPage() {
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
               </Row>
               <Row><Label>Type</Label>
-                <Select value={editForm.type}
-                  onValueChange={(v) => setEditForm({ ...editForm, type: v as FormState["type"] })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {TYPES.map((t) => <SelectItem key={t.v} value={t.v}>{t.l}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <Input required placeholder="e.g. Audition, Workshop, Gala, Grand Finale"
+                  value={editForm.type}
+                  onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} />
               </Row>
               <Row><Label>Location</Label>
                 <Input value={editForm.location}

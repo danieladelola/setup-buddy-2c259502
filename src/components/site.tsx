@@ -1126,6 +1126,8 @@ const EVENT_TYPE_LABEL: Record<string, string> = {
   agricultural_exhibition: "Summit",
 };
 
+const EVENT_TYPE_KEY = (t: string) => t.toLowerCase().replace(/[\s-]+/g, "_");
+
 export function Events({ showHeader = true }: { showHeader?: boolean }) {
   const fetchEvents = useServerFn(listPublicEvents);
   const q = useQuery({
@@ -1199,11 +1201,11 @@ export function Events({ showHeader = true }: { showHeader?: boolean }) {
                   <div className="flex-1 min-w-0 px-6 py-5 md:py-7 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-gold-deep" />
-                      <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground font-medium">{EVENT_TYPE_LABEL[e.type] ?? e.type}</span>
+                      <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground font-medium">{EVENT_TYPE_LABEL[EVENT_TYPE_KEY(e.type)] ?? e.type}</span>
                     </div>
                     <h3 className="font-display text-xl md:text-2xl text-foreground leading-tight">{e.title}</h3>
                     <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                      {e.description?.trim() || EVENT_FALLBACK_DESC[e.type] || "Join Miss Agriculture Zambia for this official event celebrating women, agriculture and Zambian culture. Reserve your ticket to secure your place."}
+                      {e.description?.trim() || EVENT_FALLBACK_DESC[EVENT_TYPE_KEY(e.type)] || "Join Miss Agriculture Zambia for this official event celebrating women, agriculture and Zambian culture. Reserve your ticket to secure your place."}
                     </p>
                     {e.location && (
                       <div className="mt-2 flex flex-col gap-1">
