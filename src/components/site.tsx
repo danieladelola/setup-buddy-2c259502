@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from "fra
 import {
   Menu, X, ArrowRight, Crown, Sprout, Users, Globe2, Leaf,
   Heart, Award, Calendar, Clock, MapPin, Mail, Phone, Instagram, Facebook,
-  Twitter, ChevronRight, Star, Quote, TrendingUp, Play,
+  Twitter, ChevronRight, Star, Quote, TrendingUp, Play, Minus, Plus, ShieldCheck, Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { listPublicContestants, listPublicEvents, listPublicMedia, type PublicEvent } from "@/lib/public.functions";
@@ -848,12 +848,9 @@ export function Contestants({
             {contestants.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {regions.map((r) => (
-                  <button key={r} onClick={() => setRegion(r)}
-                    className={`px-4 py-2 rounded-full text-xs font-medium tracking-wide transition-all ${
-                      region === r ? "bg-green-deep text-ivory" : "bg-secondary text-foreground hover:bg-secondary/80"
-                    }`}>
-                    {r}
-                  </button>
+                  <Button key={r} variant={region === r ? "default" : "outline"} size="sm" onClick={() => setRegion(r)} aria-pressed={region === r}>
+                    {r === "All" ? "All provinces" : r}
+                  </Button>
                 ))}
               </div>
             )}
@@ -864,10 +861,10 @@ export function Contestants({
           <div className="text-center py-16 text-muted-foreground">Loading contestants...</div>
         )}
         {q.error && (
-          <div className="text-center py-16 text-red-700">Could not load contestants.</div>
+          <div className="text-center py-16 text-destructive">Could not load contestants.</div>
         )}
         {!q.isLoading && !q.error && filtered.length === 0 && (
-          <div className="text-center py-16 px-6 rounded-3xl border border-dashed border-border bg-card/40">
+          <div className="text-center py-16 px-6 border-y border-border">
             <div className="text-muted-foreground max-w-xl mx-auto">
               {emptyMessage ?? "No contestants yet."}
             </div>
@@ -877,45 +874,45 @@ export function Contestants({
 
 
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((c, i) => (
-            <Reveal key={c.id} delay={i * 0.05}>
-              <div className="group relative overflow-hidden rounded-3xl bg-card border border-border/60 hover:border-gold/50 transition-all hover:-translate-y-2 hover:shadow-[var(--shadow-luxe)]">
-                <div className="aspect-[4/5] relative bg-gradient-to-br from-green-deep via-green-forest to-green-deep overflow-hidden">
-                  {c.profile_photo ? (
-                    <img src={c.profile_photo} alt={c.full_name} className="absolute inset-0 w-full h-full object-cover" />
-                  ) : (
-                    <>
-                      <div aria-hidden className="absolute inset-0 opacity-40" style={{ backgroundImage: "radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--gold) 40%, transparent), transparent 60%)" }} />
-                      <div className="absolute inset-0 grid place-items-center text-gold/30 font-display text-9xl">
-                        {c.full_name.split(" ").map((s) => s[0]).slice(0, 2).join("")}
-                      </div>
-                    </>
-                  )}
-                  {c.province && (
-                    <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur text-[10px] tracking-[0.25em] uppercase text-gold-soft border border-gold/30">
-                      {c.province}
-                    </div>
-                  )}
-                  <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-green-deep to-transparent">
-                    <div className="font-display text-2xl text-ivory">{c.full_name}</div>
-                  </div>
-                </div>
-                {scope === "active" && (
-                  <div className="p-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.dispatchEvent(new CustomEvent("vote-for", { detail: c.id }));
-                                              }}
-                      className="w-full px-5 py-3 rounded-full bg-gold text-green-deep text-sm font-semibold tracking-wide hover:opacity-90 transition"
-                    >
-                      Vote for {c.full_name.split(" ")[0]}
-                    </button>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {filtered.map((c) => (
+            <article key={c.id} className="group overflow-hidden rounded-lg bg-card border border-border transition-shadow duration-300 hover:shadow-luxe">
+              <div className="aspect-[4/4.5] relative bg-secondary overflow-hidden">
+                {c.profile_photo ? (
+                  <img src={c.profile_photo} alt={c.full_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 motion-safe:group-hover:scale-[1.03]" />
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-primary/40 font-display text-7xl">
+                    {c.full_name.split(" ").map((s) => s[0]).slice(0, 2).join("")}
                   </div>
                 )}
+                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-sm bg-card/95 px-3 py-2 text-xs font-medium text-card-foreground shadow-sm">
+                  <Crown className="size-3.5 text-gold-deep" />
+                  {scope === "past" ? "Past contestant" : "Contestant"} #{String(c.id).padStart(2, "0")}
+                </div>
               </div>
-            </Reveal>
+              <div className="p-5 md:p-6">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+                  <MapPin className="size-3.5 shrink-0" />
+                  <span>{[c.district, c.province].filter(Boolean).join(", ") || "Zambia"}</span>
+                </div>
+                <h3 className="font-display text-2xl leading-tight tracking-normal break-words">{c.full_name}</h3>
+                {c.agri_project && <p className="mt-2 text-sm text-muted-foreground line-clamp-2 min-h-10">{c.agri_project}</p>}
+                <div className="mt-5 border-t border-border pt-4 flex items-center justify-between gap-3">
+                  <div className="shrink-0">
+                    <div className="flex items-center gap-2">
+                      <Heart className="size-4 text-gold-deep" />
+                      <span className="text-xl font-semibold tabular-nums">{Number(c.votes).toLocaleString("en-US")}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{scope === "past" ? "Final votes" : "Total votes"}</span>
+                  </div>
+                  {scope === "active" && (
+                    <Button onClick={() => window.dispatchEvent(new CustomEvent("vote-for", { detail: c.id }))} aria-label={`Vote for ${c.full_name}`} className="h-11 px-4">
+                      Vote for {c.full_name.split(" ")[0]} <ArrowRight />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </article>
           ))}
         </div>
       </div>
@@ -1011,79 +1008,66 @@ export function Voting() {
 
   const noCampaign = !campaignQ.isLoading && !campaign;
 
-  const selected = contestants.find((c) => c.id === contestantId);
+  const selected = contestants.find((c) => Number(c.id) === contestantId);
 
   return (
     <Dialog open={contestantId !== null} onOpenChange={(o) => { if (!o && !mutate.isPending) { setContestantId(null); setQuantity(1); } }}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Vote for {selected?.full_name ?? "contestant"}</DialogTitle>
-          <DialogDescription>
-            {campaign ? `${campaign.name} · ${pricePerVote > 0 ? `ZMW ${pricePerVote.toFixed(2)} per vote` : "Free voting"}` : "Voting"}
-          </DialogDescription>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[480px] max-h-[calc(100dvh-2rem)] overflow-y-auto gap-0 rounded-lg p-0">
+        <DialogHeader className="px-6 pt-6 pb-5 text-left border-b border-border">
+          <div className="flex items-center gap-2 text-xs text-gold-deep font-semibold mb-2"><Crown className="size-4" /> MISS AGRICULTURE ZAMBIA</div>
+          <DialogTitle className="font-display text-3xl font-medium tracking-normal">Make your vote count.</DialogTitle>
+          <DialogDescription className="pr-4">{campaign?.name ?? "Contestant voting"}</DialogDescription>
         </DialogHeader>
-        {noCampaign ? (
-          <div className="p-6 rounded-2xl border border-dashed border-border bg-card/60 text-sm text-muted-foreground">
-            Voting is currently closed. Please check back when the next campaign opens.
+        <div className="px-6 py-5 flex items-center gap-4 bg-secondary/40">
+          <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md bg-secondary">
+            {selected?.profile_photo ? <img src={selected.profile_photo} alt={selected.full_name} className="h-full w-full object-cover object-top" /> : <div className="h-full grid place-items-center"><Crown className="size-6 text-gold-deep" /></div>}
           </div>
+          <div className="min-w-0">
+            <div className="text-xs text-muted-foreground mb-1">Your chosen contestant</div>
+            <h3 className="font-display text-xl leading-tight tracking-normal break-words">{selected?.full_name ?? "Contestant"}</h3>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {selected?.province && <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{selected.province}</span>}
+              <span className="inline-flex items-center gap-1"><Heart className="size-3 text-gold-deep" />{Number(selected?.votes ?? 0).toLocaleString("en-US")} votes</span>
+            </div>
+          </div>
+        </div>
+        {noCampaign ? (
+          <div className="px-6 py-8 text-center">
+            <Clock className="size-7 text-gold-deep mx-auto mb-3" />
+            <h3 className="font-display text-xl mb-2">Voting is currently closed</h3>
+            <p className="text-sm text-muted-foreground">Please check back when the next campaign opens.</p>
+          </div>
+        ) : campaignQ.isLoading ? (
+          <div className="p-8 flex items-center justify-center gap-2 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" />Loading voting details…</div>
         ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  mutate.mutate();
-                }}
-                className="space-y-4"
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                      Quantity
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={1000}
-                      value={quantity}
-                      onChange={(e) => setQuantity(Math.max(1, Math.min(1000, Number(e.target.value) || 1)))}
-                      className="mt-1 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm tabular-nums"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                      Email{pricePerVote > 0 ? "" : " (optional)"}
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      maxLength={200}
-                      required={pricePerVote > 0}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      className="mt-1 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/50">
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Total cost
-                  </span>
-                  <span className="font-display text-xl tabular-nums">
-                    {pricePerVote > 0
-                      ? `ZMW ${totalCost.toFixed(2)}`
-                      : "Free"}
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={mutate.isPending || !contestantId}
-                  className="w-full justify-center inline-flex items-center gap-3 px-7 py-4 rounded-full bg-green-deep text-ivory font-semibold text-sm tracking-wide hover:bg-green-forest transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {mutate.isPending ? "Processing..." : pricePerVote > 0 ? `Pay ZMW ${totalCost.toFixed(2)} & Vote` : "Cast Your Vote"} <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
+          <form onSubmit={(e) => { e.preventDefault(); mutate.mutate(); }} className="p-6 space-y-5">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <Label htmlFor="vote-quantity">Number of votes</Label>
+                <span className="text-xs text-muted-foreground">{pricePerVote > 0 ? `ZMW ${pricePerVote.toFixed(2)} / vote` : "Free voting"}</span>
+              </div>
+              <div className="flex items-center h-12 border border-input rounded-md overflow-hidden">
+                <Button type="button" variant="ghost" className="h-full w-12 rounded-none shrink-0" aria-label="Decrease votes" title="Decrease votes" disabled={quantity <= 1 || mutate.isPending} onClick={() => setQuantity(Math.max(1, quantity - 1))}><Minus /></Button>
+                <Input id="vote-quantity" type="number" min={1} max={1000} value={quantity} disabled={mutate.isPending} onChange={(e) => setQuantity(Math.max(1, Math.min(1000, Number(e.target.value) || 1)))} required className="h-full border-0 rounded-none shadow-none text-center font-semibold text-lg tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+                <Button type="button" variant="ghost" className="h-full w-12 rounded-none shrink-0" aria-label="Increase votes" title="Increase votes" disabled={quantity >= 1000 || mutate.isPending} onClick={() => setQuantity(Math.min(1000, quantity + 1))}><Plus /></Button>
+              </div>
+              <div className="grid grid-cols-4 gap-2 mt-2.5">
+                {[1, 5, 10, 50].map((n) => <Button key={n} type="button" variant={quantity === n ? "secondary" : "outline"} size="sm" aria-pressed={quantity === n} disabled={mutate.isPending} onClick={() => setQuantity(n)}>{n} {n === 1 ? "vote" : "votes"}</Button>)}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="vote-email">Email address{pricePerVote > 0 ? "" : " (optional)"}</Label>
+              <Input id="vote-email" type="email" autoComplete="email" value={email} maxLength={200} required={pricePerVote > 0} disabled={mutate.isPending} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="h-11" />
+            </div>
+            <div className="border-y border-border py-4 flex items-center justify-between gap-3">
+              <div><span className="text-sm font-medium">Total amount</span><div className="text-xs text-muted-foreground mt-1">{quantity} {quantity === 1 ? "vote" : "votes"} for {selected?.full_name.split(" ")[0] ?? "your contestant"}</div></div>
+              <span className="text-2xl font-semibold tabular-nums">{pricePerVote > 0 ? <><span className="text-xs font-medium text-muted-foreground mr-1.5">ZMW</span>{totalCost.toFixed(2)}</> : "Free"}</span>
+            </div>
+            <Button type="submit" disabled={mutate.isPending || !contestantId} className="w-full h-12">
+              {mutate.isPending ? <><Loader2 className="animate-spin" />Processing…</> : <>{pricePerVote > 0 ? `Pay ZMW ${totalCost.toFixed(2)} & vote` : "Cast your vote"}<ArrowRight /></>}
+            </Button>
+            {pricePerVote > 0 && <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="size-4 text-primary" />Secure payment with Lenco Pay</div>}
+          </form>
         )}
       </DialogContent>
     </Dialog>
