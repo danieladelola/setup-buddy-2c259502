@@ -1,19 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const EVENT_TYPES = [
-  "audition",
-  "workshop",
-  "community_outreach",
-  "grand_finale",
-  "sponsorship",
-  "agricultural_exhibition",
-] as const;
 const STATUSES = ["draft", "published", "cancelled"] as const;
 
 const eventInput = z.object({
   title: z.string().trim().min(1).max(160),
-  type: z.enum(EVENT_TYPES).default("workshop"),
+  type: z.string().trim().min(1, "Type is required").max(60).default("workshop"),
   location: z.string().trim().max(200).nullable().optional(),
   starts_at: z.string().min(1),
   ends_at: z.string().nullable().optional(),

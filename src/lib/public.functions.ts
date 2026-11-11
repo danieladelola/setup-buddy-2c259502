@@ -83,7 +83,7 @@ export const listPublicEvents = createServerFn({ method: "GET" }).handler(
     const merged: PublicEvent[] = [];
     const groups = new Map<string, PublicEvent[]>();
     for (const e of events) {
-      if (e.type === "audition") {
+      if (e.type.toLowerCase() === "audition") {
         const key = `${e.type}::${e.starts_at ?? ""}`;
         const existing = groups.get(key);
         if (existing) {
