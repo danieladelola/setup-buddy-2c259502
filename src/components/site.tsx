@@ -1008,7 +1008,7 @@ export function Voting() {
 
   const noCampaign = !campaignQ.isLoading && !campaign;
 
-  const selected = contestants.find((c) => c.id === contestantId);
+  const selected = contestants.find((c) => Number(c.id) === contestantId);
 
   return (
     <Dialog open={contestantId !== null} onOpenChange={(o) => { if (!o && !mutate.isPending) { setContestantId(null); setQuantity(1); } }}>
