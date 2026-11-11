@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const STATUSES = ["draft", "published", "cancelled"] as const;
 
-const eventInput = z.object({
+export const eventInput = z.object({
   title: z.string().trim().min(1).max(160),
   type: z.string().trim().min(1, "Type is required").max(60).default("workshop"),
   location: z.string().trim().max(200).nullable().optional(),
